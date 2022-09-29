@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from finances_record.models import BalanceSummary, CashAccount, CashEntry, ExpenseCategory, ExpenseEntry, IncomeCategory, IncomeEntry, MonthlyExpenseSummary, MonthlyIncomeSummary, Payable, Receivable, Transaction
+from finances_record.models import BalanceSummary, CashAccount, CashEntry, ExpenseCategory, ExpenseEntry, IncomeCategory, IncomeEntry, MonthlyExpenseSummary, MonthlyIncomeSummary, Payable, Receivable
 from django.contrib.auth.models import User
 
 class BalanceSummarySerializer(serializers.ModelSerializer):
@@ -7,14 +7,14 @@ class BalanceSummarySerializer(serializers.ModelSerializer):
         model = BalanceSummary
         fields = ['id', 'payable_balance', 'receivable_balance', 'cash_balance']
 
-class TransactionSerializer(serializers.ModelSerializer):
-    income_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=IncomeEntry.objects.all())
-    expense_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=ExpenseEntry.objects.all())
-    cash_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=CashEntry.objects.all())
+# class TransactionSerializer(serializers.ModelSerializer):
+#     income_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=IncomeEntry.objects.all())
+#     expense_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=ExpenseEntry.objects.all())
+#     cash_entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
-    class Meta:
-        model = Transaction
-        fields = ['id', 'date', 'description', 'income_entries', 'expense_entries', 'cash_entries',]
+#     class Meta:
+#         model = Transaction
+#         fields = ['id', 'date', 'description', 'income_entries', 'expense_entries', 'cash_entries',]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,32 +64,32 @@ class CashAccountSerializer(serializers.ModelSerializer):
 class ExpenseEntrySerializer(serializers.ModelSerializer):
     payables = serializers.PrimaryKeyRelatedField(many=True, queryset=Payable.objects.all())
     expense_category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
-    transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
+    # transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
     monthly_summary = serializers.PrimaryKeyRelatedField(queryset=MonthlyExpenseSummary.objects.all())
 
     class Meta:
         model = ExpenseEntry
-        fields = ['id', 'expense_category', 'amount','transaction', 'monthly_summary', 'payables']
+        fields = ['id', 'expense_category', 'date', 'description', 'amount','transaction', 'monthly_summary', 'payables']
 
 class IncomeEntrySerializer(serializers.ModelSerializer):
     receivables = serializers.PrimaryKeyRelatedField(many=True, queryset=Receivable.objects.all())
     income_category = serializers.PrimaryKeyRelatedField(queryset=IncomeCategory.objects.all())
-    transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
+    # transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
     monthly_summary = serializers.PrimaryKeyRelatedField(queryset=MonthlyIncomeSummary.objects.all())
 
     class Meta:
         model = IncomeEntry
-        fields = ['id', 'income_category', 'amount','transaction', 'monthly_summary', 'receivables']
+        fields = ['id', 'income_category', 'date', 'description', 'amount','transaction', 'monthly_summary', 'receivables']
 
 class CashEntrySerializer(serializers.ModelSerializer):
     payables = serializers.PrimaryKeyRelatedField(many=True, queryset=Payable.objects.all())
     receivables = serializers.PrimaryKeyRelatedField(many=True, queryset=Receivable.objects.all())
     cash_account = serializers.PrimaryKeyRelatedField(queryset=CashAccount.objects.all())
-    transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
+    # transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
 
     class Meta:
         model = CashEntry
-        fields = ['id', 'cash_account', 'amount','transaction', 'payables', 'receivables']
+        fields = ['id', 'cash_account', 'date', 'description', 'amount','transaction', 'payables', 'receivables']
 
 class PayableSerializer(serializers.ModelSerializer):
     expense_entry = serializers.PrimaryKeyRelatedField(queryset=ExpenseEntry.objects.all())

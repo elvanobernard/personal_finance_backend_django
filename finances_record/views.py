@@ -1,15 +1,11 @@
 from django.shortcuts import render
-from finances_record.models import BalanceSummary, CashEntry, ExpenseCategory, ExpenseEntry, IncomeEntry, MonthlyExpenseSummary, MonthlyIncomeSummary, Payable, Receivable, Transaction, IncomeCategory, CashAccount
-from finances_record.serializers import BalanceSummarySerializer, CashAccountSerializer, CashEntrySerializer, ExpenseCategorySerializer, ExpenseEntrySerializer, IncomeCategorySerializer, IncomeEntrySerializer, MonthlyExpenseSummarySerializer, MonthlyIncomeSummarySerializer, PayableSerializer, ReceivableSerializer, TransactionSerializer
+from finances_record.models import BalanceSummary, CashEntry, ExpenseCategory, ExpenseEntry, IncomeEntry, MonthlyExpenseSummary, MonthlyIncomeSummary, Payable, Receivable, IncomeCategory, CashAccount
+from finances_record.serializers import BalanceSummarySerializer, CashAccountSerializer, CashEntrySerializer, ExpenseCategorySerializer, ExpenseEntrySerializer, IncomeCategorySerializer, IncomeEntrySerializer, MonthlyExpenseSummarySerializer, MonthlyIncomeSummarySerializer, PayableSerializer, ReceivableSerializer
 from rest_framework import status, generics
 
 # from rest_framework import 
 
 # Create your views here.
-class TransactionList(generics.ListCreateAPIView):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-
 class ExpenseCategoryList(generics.ListCreateAPIView):
     queryset = ExpenseCategory.objects.all()
     serializer_class = ExpenseCategorySerializer

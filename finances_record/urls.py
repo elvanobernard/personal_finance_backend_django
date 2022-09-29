@@ -3,7 +3,6 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from finances_record import views
 
 urlpatterns = [
-    path('transactions/', views.TransactionList.as_view()),
     path('expense-categories/', views.ExpenseCategoryList.as_view()),
     path('income-categories/', views.IncomeCategoryList.as_view()),
     path('cash-accounts/', views.CashAccountList.as_view()),
