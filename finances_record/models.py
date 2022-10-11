@@ -25,7 +25,7 @@ class IncomeCategory(models.Model):
 class MonthlyExpenseSummary(models.Model):
     month = models.IntegerField()
     year = models.IntegerField()
-    expense_category = models.ForeignKey(ExpenseCategory, related_name='monthly_expense_summaries', on_delete=models.PROTECT)
+    category = models.ForeignKey(ExpenseCategory, related_name='monthly_expense_summaries', on_delete=models.PROTECT)
     balance = models.IntegerField()
 
     def __str__(self):
@@ -34,7 +34,7 @@ class MonthlyExpenseSummary(models.Model):
 class MonthlyIncomeSummary(models.Model):
     month = models.IntegerField()
     year = models.IntegerField()
-    income_category = models.ForeignKey(IncomeCategory, related_name='monthly_income_summaries', on_delete=models.PROTECT)
+    category = models.ForeignKey(IncomeCategory, related_name='monthly_income_summaries', on_delete=models.PROTECT)
     balance = models.IntegerField()
 
     def __str__(self):
@@ -42,6 +42,8 @@ class MonthlyIncomeSummary(models.Model):
 
 class CashAccount(models.Model):
     name = models.CharField(max_length=50)
+    description = models.CharField(max_length=100)
+    balance = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -54,7 +56,7 @@ class CashEntry(models.Model):
 
 
 class ExpenseEntry(models.Model):
-    expense_category = models.ForeignKey(ExpenseCategory, related_name='expense_entries', on_delete=models.PROTECT, )
+    category = models.ForeignKey(ExpenseCategory, related_name='expense_entries', on_delete=models.PROTECT, )
     amount = models.IntegerField()
     description = models.CharField(max_length=100)
     date = models.DateField()
@@ -62,7 +64,7 @@ class ExpenseEntry(models.Model):
     cash_entry = models.ForeignKey(CashEntry, related_name='expense_entry', blank=True, null=True, on_delete=models.PROTECT)
 
 class IncomeEntry(models.Model):
-    income_category = models.ForeignKey(IncomeCategory, related_name='income_entries', on_delete=models.PROTECT)
+    category = models.ForeignKey(IncomeCategory, related_name='income_entries', on_delete=models.PROTECT)
     amount = models.IntegerField()
     description = models.CharField(max_length=100)
     date = models.DateField()
@@ -72,12 +74,18 @@ class IncomeEntry(models.Model):
 
 class Payable(models.Model):
     amount = models.IntegerField()
+    description = models.CharField(max_length=100)
+    date = models.DateField()
     paid = models.BooleanField(default=False)
-    expense_entry = models.ForeignKey(ExpenseEntry, related_name='payables', on_delete=models.PROTECT)
+    payment_date = models.DateField(blank=True, null=True)
+    entry = models.ForeignKey(ExpenseEntry, related_name='payables', on_delete=models.PROTECT)
     cash_entry = models.ForeignKey(CashEntry, related_name='payables', blank=True, null=True, on_delete=models.PROTECT)
 
 class Receivable(models.Model):
     amount = models.IntegerField()
+    description = models.CharField(max_length=100)
+    date = models.DateField()
     paid = models.BooleanField(default=False)
-    income_entry = models.ForeignKey(IncomeEntry, related_name='receivables', on_delete=models.PROTECT)
+    payment_date = models.DateField(blank=True, null=True)
+    entry = models.ForeignKey(IncomeEntry, related_name='receivables', on_delete=models.PROTECT)
     cash_entry = models.ForeignKey(CashEntry, related_name='receivables', blank=True, null=True, on_delete=models.PROTECT)
