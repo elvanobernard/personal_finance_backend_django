@@ -17,7 +17,7 @@ class ExpenseCategory(models.Model):
 
 class IncomeCategory(models.Model):
     name = models.CharField(max_length=50)
-    target = models.IntegerField()
+    budget = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -25,7 +25,7 @@ class IncomeCategory(models.Model):
 class MonthlyExpenseSummary(models.Model):
     month = models.IntegerField()
     year = models.IntegerField()
-    category = models.ForeignKey(ExpenseCategory, related_name='monthly_expense_summaries', on_delete=models.PROTECT)
+    category = models.ForeignKey(ExpenseCategory, related_name='monthly_summaries', on_delete=models.PROTECT)
     balance = models.IntegerField()
 
     def __str__(self):
@@ -34,7 +34,7 @@ class MonthlyExpenseSummary(models.Model):
 class MonthlyIncomeSummary(models.Model):
     month = models.IntegerField()
     year = models.IntegerField()
-    category = models.ForeignKey(IncomeCategory, related_name='monthly_income_summaries', on_delete=models.PROTECT)
+    category = models.ForeignKey(IncomeCategory, related_name='monthly_summaries', on_delete=models.PROTECT)
     balance = models.IntegerField()
 
     def __str__(self):
@@ -49,26 +49,26 @@ class CashAccount(models.Model):
         return self.name
 
 class CashEntry(models.Model):
-    cash_account = models.ForeignKey(CashAccount, related_name='cash_entries', on_delete=models.PROTECT)
+    cash_account = models.ForeignKey(CashAccount, related_name='entries', on_delete=models.PROTECT)
     amount = models.IntegerField()
     description = models.CharField(max_length=100)
     date = models.DateField()
 
 
 class ExpenseEntry(models.Model):
-    category = models.ForeignKey(ExpenseCategory, related_name='expense_entries', on_delete=models.PROTECT, )
+    category = models.ForeignKey(ExpenseCategory, related_name='entries', on_delete=models.PROTECT, )
     amount = models.IntegerField()
     description = models.CharField(max_length=100)
     date = models.DateField()
-    monthly_summary = models.ForeignKey(MonthlyExpenseSummary, blank=True, null=True,  related_name='expense_entries', on_delete=models.PROTECT)
+    monthly_summary = models.ForeignKey(MonthlyExpenseSummary, blank=True, null=True,  related_name='entries', on_delete=models.PROTECT)
     cash_entry = models.ForeignKey(CashEntry, related_name='expense_entry', blank=True, null=True, on_delete=models.PROTECT)
 
 class IncomeEntry(models.Model):
-    category = models.ForeignKey(IncomeCategory, related_name='income_entries', on_delete=models.PROTECT)
+    category = models.ForeignKey(IncomeCategory, related_name='entries', on_delete=models.PROTECT)
     amount = models.IntegerField()
     description = models.CharField(max_length=100)
     date = models.DateField()
-    monthly_summary = models.ForeignKey(MonthlyIncomeSummary, blank=True, null=True, related_name='income_entries', on_delete=models.PROTECT)
+    monthly_summary = models.ForeignKey(MonthlyIncomeSummary, blank=True, null=True, related_name='entries', on_delete=models.PROTECT)
     cash_entry = models.ForeignKey(CashEntry, related_name='income_entry', blank=True, null=True, on_delete=models.PROTECT)
 
 
