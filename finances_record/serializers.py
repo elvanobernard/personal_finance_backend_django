@@ -57,15 +57,16 @@ class MonthlyIncomeSummarySerializer(serializers.ModelSerializer):
         fields = ['id', 'month', 'year','category', 'balance', 'entries']
 
 class CashAccountSerializer(serializers.ModelSerializer):
-    entries = serializers.PrimaryKeyRelatedField(many=True, queryset=CashEntry.objects.all())
+    # entries = serializers.PrimaryKeyRelatedField(many=True, queryset=CashEntry.objects.all())
 
     class Meta:
         model = CashAccount
-        fields = ['id', 'name', 'description', 'balance', 'entries']
+        fields = ['id', 'name', 'description', 'balance',]
 
 class ExpenseEntrySerializer(serializers.ModelSerializer):
     payables = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     # category = serializers.StringRelatedField()
+    description = serializers.CharField(max_length=100, allow_blank=True)
     category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
     cash = serializers.BooleanField(write_only=True)
     cash_account = serializers.PrimaryKeyRelatedField(write_only=True ,queryset=CashAccount.objects.all())
@@ -80,6 +81,7 @@ class ExpenseEntrySerializer(serializers.ModelSerializer):
 class IncomeEntrySerializer(serializers.ModelSerializer):
     receivables = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     category = serializers.PrimaryKeyRelatedField(queryset=IncomeCategory.objects.all())
+    description = serializers.CharField(max_length=100, allow_blank=True)
     cash = serializers.BooleanField(write_only=True)
     cash_account = serializers.PrimaryKeyRelatedField(write_only=True ,queryset=CashAccount.objects.all())
     # transaction = serializers.PrimaryKeyRelatedField(queryset=Transaction.objects.all())
