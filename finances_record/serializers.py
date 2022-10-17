@@ -105,6 +105,7 @@ class PayableSerializer(serializers.ModelSerializer):
     entry = serializers.PrimaryKeyRelatedField(queryset=ExpenseEntry.objects.all())
     # cash_entry = serializers.PrimaryKeyRelatedField(queryset=CashEntry.objects.all(), required=False)
     cash_account = serializers.PrimaryKeyRelatedField(queryset=CashAccount.objects.all(), write_only=True)
+    description = serializers.CharField(max_length=100, allow_blank=True)
     class Meta:
         model = Payable
         fields = ['id', 'description', 'amount', 'date', 'paid', 'payment_date', 'entry', 'cash_account']
@@ -113,6 +114,7 @@ class ReceivableSerializer(serializers.ModelSerializer):
     entry = serializers.PrimaryKeyRelatedField(queryset=IncomeEntry.objects.all())
     # cash_entry = serializers.PrimaryKeyRelatedField(queryset=CashEntry.objects.all(), required=False)
     cash_account = serializers.PrimaryKeyRelatedField(queryset=CashAccount.objects.all(), write_only=True)
+    description = serializers.CharField(max_length=100, allow_blank=True)
     class Meta:
         model = Receivable
         fields = ['id', 'description', 'amount', 'date', 'paid', 'payment_date', 'entry', 'cash_account']
