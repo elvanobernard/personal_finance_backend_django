@@ -4,7 +4,9 @@ from finances_record import views
 
 urlpatterns = [
     path('expense-categories/', views.ExpenseCategoryList.as_view()),
+    path('expense-categories/<int:pk>', views.ExpenseCategoryDetail.as_view()),
     path('income-categories/', views.IncomeCategoryList.as_view()),
+    path('income-categories/<int:pk>', views.IncomeCategoryDetail.as_view()),
     path('cash-accounts/', views.CashAccountList.as_view()),
     path('expenses/', views.ExpenseEntryList.as_view()),
     path('expenses/<int:pk>/', views.ExpenseEntryDetail.as_view()),

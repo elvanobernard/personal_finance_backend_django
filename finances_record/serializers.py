@@ -8,23 +8,14 @@ class BalanceSummarySerializer(serializers.ModelSerializer):
         model = BalanceSummary
         fields = ['id', 'payable_balance', 'receivable_balance', 'cash_balance']
 
-# class TransactionSerializer(serializers.ModelSerializer):
-#     income_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=IncomeEntry.objects.all())
-#     expense_entries = serializers.PrimaryKeyRelatedField(many=True, queryset=ExpenseEntry.objects.all())
-#     cash_entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-#     class Meta:
-#         model = Transaction
-#         fields = ['id', 'date', 'description', 'income_entries', 'expense_entries', 'cash_entries',]
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'snippets']
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
-    monthly_summaries = serializers.PrimaryKeyRelatedField(many=True, queryset=MonthlyExpenseSummary.objects.all())
-    entries = serializers.PrimaryKeyRelatedField(many=True, queryset=ExpenseEntry.objects.all())
+    monthly_summaries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = ExpenseCategory
@@ -32,8 +23,8 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
         # fields = ['id', 'name', 'budget', ]
 
 class IncomeCategorySerializer(serializers.ModelSerializer):
-    monthly_summaries = serializers.PrimaryKeyRelatedField(many=True, queryset=MonthlyIncomeSummary.objects.all())
-    entries = serializers.PrimaryKeyRelatedField(many=True, queryset=IncomeEntry.objects.all())
+    monthly_summaries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = IncomeCategory
@@ -49,7 +40,7 @@ class MonthlyExpenseSummarySerializer(serializers.ModelSerializer):
         fields = ['id', 'month', 'year','category', 'balance', 'entries']
 
 class MonthlyIncomeSummarySerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=IncomeCategory.objects.all())
+    category = IncomeCategorySerializer(read_only=True)
     entries = serializers.PrimaryKeyRelatedField(many=True, queryset=IncomeEntry.objects.all())
 
     class Meta:

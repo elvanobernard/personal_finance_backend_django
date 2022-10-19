@@ -1,4 +1,6 @@
+from datetime import datetime
 from django.shortcuts import render
+from finances_record import serializers
 from finances_record.models import BalanceSummary, CashEntry, ExpenseCategory, ExpenseEntry, IncomeEntry, MonthlyExpenseSummary, MonthlyIncomeSummary, Payable, Receivable, IncomeCategory, CashAccount
 from finances_record.serializers import BalanceSummarySerializer, CashAccountSerializer, CashEntrySerializer, ExpenseCategorySerializer, ExpenseEntrySerializer, IncomeCategorySerializer, IncomeEntrySerializer, MonthlyExpenseSummarySerializer, MonthlyIncomeSummarySerializer, PayableSerializer, ReceivableSerializer
 from rest_framework.response import Response
@@ -107,8 +109,6 @@ def update_unpaid(self, serializer, entry_type):
     
     # Else, this will be a data update, but no change in payment status
     else:
-        print('-' * 10,'UPDATE TO CHANGE DATA', '-' * 10)
-        
         # If previous status was paid, update the balance
         if prev_instance.paid:
             # Obtain prev cash entry to update date & description
@@ -145,7 +145,15 @@ class ExpenseCategoryList(generics.ListCreateAPIView):
     queryset = ExpenseCategory.objects.all()
     serializer_class = ExpenseCategorySerializer
 
+class ExpenseCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ExpenseCategory.objects.all()
+    serializer_class = ExpenseCategorySerializer
+
 class IncomeCategoryList(generics.ListCreateAPIView):
+    queryset = IncomeCategory.objects.all()
+    serializer_class = IncomeCategorySerializer
+
+class IncomeCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = IncomeCategory.objects.all()
     serializer_class = IncomeCategorySerializer
 
@@ -162,7 +170,7 @@ class CashAccountList(generics.ListCreateAPIView):
         serializer.save()
 
 class ExpenseEntryList(generics.ListCreateAPIView):
-    queryset = ExpenseEntry.objects.all()
+    queryset = ExpenseEntry.objects.order_by('-date')
     serializer_class = ExpenseEntrySerializer
 
     def perform_create(self, serializer):
@@ -173,7 +181,7 @@ class ExpenseEntryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ExpenseEntrySerializer
 
 class IncomeEntryList(generics.ListCreateAPIView):
-    queryset = IncomeEntry.objects.all()
+    queryset = IncomeEntry.objects.order_by('-date')
     serializer_class = IncomeEntrySerializer
     
     def perform_create(self, serializer):
@@ -188,7 +196,7 @@ class CashEntryList(generics.ListCreateAPIView):
     serializer_class = CashEntrySerializer
 
 class CashEntryDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CashEntry.objects.all()
+    queryset = CashEntry.objects.order_by('-date')
     serializer_class = CashEntrySerializer
 
 class BalanceSummaryList(generics.ListCreateAPIView):
@@ -221,8 +229,15 @@ class MonthlyIncomeSummaryList(generics.ListCreateAPIView):
         return queryset
 
 class PayableList(generics.ListCreateAPIView):
-    queryset = Payable.objects.all()
+    queryset = Payable.objects.order_by('-date')
     serializer_class = PayableSerializer
+
+    def get_queryset(self):
+        queryset = Payable.objects.order_by('-date')
+        unpaid = self.request.query_params.get('unpaid')
+        if unpaid:
+            queryset = Payable.objects.filter(paid=False).order_by('-date')
+        return queryset
 
 class PayableDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Payable.objects.all()
@@ -232,7 +247,7 @@ class PayableDetail(generics.RetrieveUpdateDestroyAPIView):
         update_unpaid(self, serializer, PAYABLE_ENTRY)
 
 class ReceivableList(generics.ListCreateAPIView):
-    queryset = Receivable.objects.all()
+    queryset = Receivable.objects.order_by('-date')
     serializer_class = ReceivableSerializer
 
 class ReceivableDetail(generics.RetrieveUpdateDestroyAPIView):
